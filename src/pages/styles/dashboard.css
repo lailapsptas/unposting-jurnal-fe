@@ -1,0 +1,98 @@
+.dashboard-container {
+  display: flex;
+  gap: 2rem;
+  margin-top: 2rem;
+  margin-right: 2rem;
+  max-width: 100%;
+}
+
+.dashboard-card {
+  flex: 1;
+  padding: 1rem;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 18px;
+  font-family: "Poppins", sans-serif;
+}
+
+.info-card {
+  min-width: 60%;
+}
+
+.calendar-card {
+  min-width: 40%;
+}
+
+.dashboard-title {
+  color: #92e3a9;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.calendar-wrapper {
+  padding: 1rem;
+}
+
+.custom-calendar .p-datepicker {
+  border: none;
+  padding: 0;
+  width: 100%;
+}
+
+.custom-calendar .p-datepicker table {
+  font-family: "Poppins", sans-serif;
+  width: 100%;
+}
+
+.custom-calendar .p-datepicker table td {
+  padding: 0.5rem;
+}
+
+.custom-calendar .p-datepicker table td > span {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-calendar .p-datepicker table td > span.p-highlight {
+  background: #92e3a9;
+  color: #ffffff;
+}
+
+.custom-calendar .p-datepicker .p-datepicker-header {
+  background: transparent;
+  padding: 0.5rem;
+  border: none;
+}
+
+.custom-calendar .p-datepicker .p-datepicker-header .p-datepicker-prev,
+.custom-calendar .p-datepicker .p-datepicker-header .p-datepicker-next {
+  color: #666;
+}
+
+.custom-calendar .p-datepicker .p-datepicker-header .p-datepicker-title {
+  font-size: 1rem;
+  color: #333;
+}
+
+.custom-calendar .p-datepicker table th {
+  font-size: 0.8rem;
+  color: #666;
+  padding: 0.5rem;
+}
+
+.custom-calendar .p-datepicker table td > span:hover {
+  background: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    flex-direction: column;
+  }
+}
