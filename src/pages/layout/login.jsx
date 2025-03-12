@@ -1,9 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "primereact/toast";
-import { useRef } from "react";
 import { login as loginApi } from "../../services/login";
 import { useAuth } from "../../states/use-auth";
 import "../styles/login.css";
@@ -25,18 +24,22 @@ const Login = () => {
       const response = await loginApi(email, password);
       const { token, user } = response.data;
 
-      login(user, token);
+      if (token && user) {
+        login(user, token);
 
-      toast.current.show({
-        severity: "success",
-        summary: "Success",
-        detail: "Login successful!",
-        life: 3000,
-      });
+        toast.current.show({
+          severity: "success",
+          summary: "Success",
+          detail: "Login successful!",
+          life: 3000,
+        });
 
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+        setTimeout(() => {
+          navigate("/dashboard");
+        }, 1000);
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || "An error occurred during login";

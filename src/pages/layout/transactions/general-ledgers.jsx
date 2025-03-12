@@ -6,201 +6,222 @@ import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
-import { Dropdown } from "primereact/dropdown";
+import { Calendar } from "primereact/calendar";
 import { ConfirmPopup, confirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
 import {
-  getAllUsers,
-  deleteUsers,
-  createUsers,
-  getUsersById,
-  updateUsers,
-} from "../../../services/settings/users";
-import { getAllRoles } from "../../../services/settings/roles";
-import { getAllJobPositions } from "../../../services/settings/job-positions";
+  getAllGeneralLedgers,
+  getGeneralLedgerById,
+  deleteGeneralLedger,
+  createGeneralLedger,
+  updateGeneralLedger,
+} from "../../../services/transactions/general-ledgers.js";
+import DetailsLedger from "../../../components/layout/ledgers-dialog.jsx";
 import { useAuth } from "../../../states/use-auth";
-import "../../styles/settings/users.css";
+import "../../styles/transactions/general-ledgers.css";
 
 const GeneralLedger = () => {
   const toast = useRef(null);
-  const [usersData, setUsersData] = useState([]);
-  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [generalLedgersData, setGeneralLedgersData] = useState([]);
+  const [filteredGeneralLedgers, setFilteredGeneralLedgers] = useState([]);
   const [visible, setVisible] = useState(false);
-  const [newUser, setNewUser] = useState({
-    username: "",
-    full_name: "",
-    email: "",
-    password: "",
-    role_id: null,
-    jobPosition_id: null,
+  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [newGeneralLedger, setNewGeneralLedger] = useState({
+    transaction_date: null,
+    description: "",
+    total_debit: 0,
+    total_credit: 0,
+    remaining_balance: 0,
+    isPosting: false,
   });
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedGeneralLedger, setSelectedGeneralLedger] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [initialUserData, setInitialUserData] = useState(null);
   const [errors, setErrors] = useState({
-    username: "",
-    full_name: "",
-    email: "",
-    password: "",
-    role_id: "",
-    jobPosition_id: "",
+    transaction_date: "",
+    description: "",
   });
-  const [roles, setRoles] = useState([]);
-  const [jobPositions, setJobPositions] = useState([]);
 
   const { user: currentUser } = useAuth();
 
+  const formatCurrency = (value) => {
+    if (value === null || value === undefined) return "";
+
+    const numValue = typeof value === "string" ? parseFloat(value) : value;
+
+    return numValue.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    });
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const fetchData = async () => {
+    try {
+      const fetchedGeneralLedgers = await getAllGeneralLedgers();
+      setGeneralLedgersData(fetchedGeneralLedgers);
+      setFilteredGeneralLedgers(fetchedGeneralLedgers);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to fetch general ledgers",
+        life: 3000,
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const fetchedUsers = await getAllUsers();
-        const fetchedRoles = await getAllRoles();
-        const fetchedJobPositions = await getAllJobPositions();
-
-        setUsersData(fetchedUsers);
-        setFilteredUsers(fetchedUsers);
-        setRoles(fetchedRoles);
-        setJobPositions(fetchedJobPositions);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
   useEffect(() => {
-    const filteredData = usersData.filter(
-      (user) =>
-        user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredData = generalLedgersData.filter((generalLedger) =>
+      generalLedger.description.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    setFilteredUsers(filteredData);
-  }, [searchTerm, usersData]);
+    setFilteredGeneralLedgers(filteredData);
+  }, [searchTerm, generalLedgersData]);
 
-  const validateInputs = (user) => {
+  const validateInputs = (generalLedger) => {
     const newErrors = {
-      username: !user.username.trim() ? "Username is required" : "",
-      full_name: !user.full_name.trim() ? "Full name is required" : "",
-      email: !user.email.trim() ? "Email is required" : "",
-      password:
-        !user.password.trim() && !isEditMode ? "Password is required" : "",
-      role_id: !user.role_id ? "Role is required" : "",
-      jobPosition_id: !user.jobPosition_id ? "Job Position is required" : "",
+      transaction_date: !generalLedger.transaction_date
+        ? "Transaction date is required"
+        : "",
+      description: !generalLedger.description.trim()
+        ? "Description is required"
+        : "",
     };
+
     setErrors(newErrors);
-    return (
-      !newErrors.username &&
-      !newErrors.full_name &&
-      !newErrors.email &&
-      !newErrors.password &&
-      !newErrors.role_id &&
-      !newErrors.jobPosition_id
-    );
+    return !newErrors.transaction_date && !newErrors.description;
   };
 
-  const handlecreateUsers = async () => {
-    if (!validateInputs(newUser)) {
+  const handleCreateGeneralLedger = async () => {
+    if (!validateInputs(newGeneralLedger)) {
       return;
     }
 
     try {
-      const createdUser = await createUsers(newUser);
-      setUsersData((prevUsers) => [...prevUsers, createdUser]);
+      const formattedDate = new Date(
+        newGeneralLedger.transaction_date
+      ).toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+
+      const dataToSubmit = {
+        ...newGeneralLedger,
+        transaction_date: formattedDate,
+      };
+
+      await createGeneralLedger(dataToSubmit);
+
+      await fetchData();
+
       setVisible(false);
-      setNewUser({
-        username: "",
-        full_name: "",
-        email: "",
-        password: "",
-        role_id: null,
-        jobPosition_id: null,
+      setNewGeneralLedger({
+        transaction_date: null,
+        description: "",
+        total_debit: 0,
+        total_credit: 0,
+        remaining_balance: 0,
+        isPosting: false,
       });
       setErrors({
-        username: "",
-        full_name: "",
-        email: "",
-        password: "",
-        role_id: "",
-        jobPosition_id: "",
+        transaction_date: "",
+        description: "",
       });
       toast.current.show({
         severity: "success",
         summary: "Success",
-        detail: "User created successfully",
+        detail: "General Ledger created successfully",
         life: 3000,
       });
     } catch (error) {
-      console.error("Error creating user:", error);
+      console.error("Error creating general ledger:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Failed to create user",
+        detail: "Failed to create general ledger",
         life: 3000,
       });
     }
   };
 
-  const handleEditUser = async () => {
-    if (!validateInputs(selectedUser)) {
+  const handleEditGeneralLedger = async () => {
+    if (!validateInputs(selectedGeneralLedger)) {
       return;
     }
 
     try {
-      const userDataToUpdate = { ...selectedUser };
-      if (!userDataToUpdate.password) {
-        delete userDataToUpdate.password;
-      }
+      const formattedDate = new Date(
+        selectedGeneralLedger.transaction_date
+      ).toLocaleDateString("en-CA", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
 
-      await updateUsers(selectedUser.id, userDataToUpdate);
-      setUsersData((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === selectedUser.id ? selectedUser : user
-        )
-      );
+      const dataToSubmit = {
+        ...selectedGeneralLedger,
+        transaction_date: formattedDate,
+      };
+
+      await updateGeneralLedger(selectedGeneralLedger.id, dataToSubmit);
+
+      await fetchData();
+
+      setVisible(false);
       setIsEditMode(false);
       setErrors({
-        username: "",
-        full_name: "",
-        email: "",
-        password: "",
-        role_id: "",
-        jobPosition_id: "",
+        transaction_date: "",
+        description: "",
       });
       toast.current.show({
         severity: "success",
         summary: "Success",
-        detail: "User updated successfully",
+        detail: "General Ledger updated successfully",
         life: 3000,
       });
     } catch (error) {
-      console.error("Error updating user:", error);
+      console.error("Error updating general ledger:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Failed to update user",
+        detail: "Failed to update general ledger",
         life: 3000,
       });
     }
   };
 
-  const handleDeleteUser = async (id) => {
+  const handleDeleteGeneralLedger = async (id) => {
     try {
-      await deleteUsers(id);
-      setUsersData((prevUsers) => prevUsers.filter((user) => user.id !== id));
+      await deleteGeneralLedger(id);
+
+      await fetchData();
+
       toast.current.show({
         severity: "success",
         summary: "Success",
-        detail: "User deleted successfully",
+        detail: "General Ledger deleted successfully",
         life: 3000,
       });
     } catch (error) {
-      console.error("Error deleting user:", error);
+      console.error("Error deleting general ledger:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Failed to delete user",
+        detail: "Failed to delete general ledger",
         life: 3000,
       });
     }
@@ -208,35 +229,47 @@ const GeneralLedger = () => {
 
   const handleRowClick = async (rowData) => {
     try {
-      const user = await getUsersById(rowData.id);
-      setSelectedUser({ ...user, password: "" });
-      setInitialUserData(user);
-      setVisible(true);
-      setIsEditMode(false);
-      setErrors({
-        username: "",
-        full_name: "",
-        email: "",
-        password: "",
-        role_id: "",
-        jobPosition_id: "",
-      });
+      const ledgerDetails = await getGeneralLedgerById(rowData.id);
+      setSelectedGeneralLedger(ledgerDetails);
+      setDetailsVisible(true);
     } catch (error) {
-      console.error("Error fetching user by ID:", error);
+      console.error("Error fetching ledger details:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Failed to fetch ledger details",
+        life: 3000,
+      });
     }
   };
 
+  const openEditDialog = (rowData) => {
+    const formattedGeneralLedger = {
+      ...rowData,
+      transaction_date: new Date(rowData.transaction_date),
+    };
+
+    setSelectedGeneralLedger(formattedGeneralLedger);
+    setVisible(true);
+    setIsEditMode(true);
+    setErrors({
+      transaction_date: "",
+      description: "",
+    });
+  };
+
   const handleCancelEdit = () => {
-    setSelectedUser(initialUserData);
+    setVisible(false);
+    setSelectedGeneralLedger(null);
     setIsEditMode(false);
     setErrors({
-      username: "",
-      full_name: "",
-      email: "",
-      password: "",
-      role_id: "",
-      jobPosition_id: "",
+      transaction_date: "",
+      description: "",
     });
+  };
+
+  const currencyBodyTemplate = (rowData, field) => {
+    return formatCurrency(rowData[field]);
   };
 
   const actionBodyTemplate = (rowData) => {
@@ -245,29 +278,44 @@ const GeneralLedger = () => {
     }
 
     return (
-      <button
-        className="action-button"
-        onClick={(e) => {
-          e.stopPropagation();
-          confirmPopup({
-            target: e.currentTarget,
-            message: "Are you sure you want to delete this user?",
-            icon: "pi pi-exclamation-triangle",
-            acceptClassName: "p-button-danger",
-            accept: () => handleDeleteUser(rowData.id),
-            reject: () => {
-              toast.current.show({
-                severity: "info",
-                summary: "Cancelled",
-                detail: "Delete action cancelled",
-                life: 3000,
-              });
-            },
-          });
-        }}
-      >
-        <i className="pi pi-trash action-icon"></i>
-      </button>
+      <div className="action-buttons">
+        <Button
+          icon="pi pi-pencil"
+          rounded
+          outlined
+          severity="info"
+          aria-label="Edit"
+          onClick={(e) => {
+            e.stopPropagation();
+            openEditDialog(rowData);
+          }}
+        />
+        <Button
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          aria-label="Delete"
+          onClick={(e) => {
+            e.stopPropagation();
+            confirmPopup({
+              target: e.currentTarget,
+              message: "Are you sure you want to delete this general ledger?",
+              icon: "pi pi-exclamation-triangle",
+              acceptClassName: "p-button-danger",
+              accept: () => handleDeleteGeneralLedger(rowData.id),
+              reject: () => {
+                toast.current.show({
+                  severity: "info",
+                  summary: "Cancelled",
+                  detail: "Delete action cancelled",
+                  life: 3000,
+                });
+              },
+            });
+          }}
+        />
+      </div>
     );
   };
 
@@ -275,13 +323,13 @@ const GeneralLedger = () => {
     <Layout>
       <Toast ref={toast} />
       <ConfirmPopup />
-      <Card className="roles-container">
-        <h2 className="roles-title">General Ledgers</h2>
-        <div className="roles-card">
+      <Card className="ledgers-container">
+        <h2 className="ledgers-title">General Ledgers</h2>
+        <div className="ledgers-card">
           <div className="search-container">
             <input
               type="text"
-              placeholder="Search by Full Name or Email..."
+              placeholder="Search by Description..."
               className="search-input"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -291,15 +339,11 @@ const GeneralLedger = () => {
                 className="create-button"
                 onClick={() => {
                   setVisible(true);
-                  setSelectedUser(null);
+                  setSelectedGeneralLedger(null);
                   setIsEditMode(false);
                   setErrors({
-                    username: "",
-                    full_name: "",
-                    email: "",
-                    password: "",
-                    role_id: "",
-                    jobPosition_id: "",
+                    transaction_date: "",
+                    description: "",
                   });
                 }}
               >
@@ -310,7 +354,7 @@ const GeneralLedger = () => {
         </div>
 
         <DataTable
-          value={filteredUsers}
+          value={filteredGeneralLedgers}
           paginator
           rows={5}
           rowsPerPageOptions={[5, 10, 30]}
@@ -319,23 +363,47 @@ const GeneralLedger = () => {
           currentPageReportTemplate="{first} to {last} of {totalRecords}"
           onRowClick={(e) => handleRowClick(e.data)}
         >
-          <Column field="id" header="ID" style={{ width: "10%" }} sortable />
           <Column
-            field="full_name"
-            header="Full Name"
+            field="transaction_date"
+            header="Transaction Date"
+            style={{ width: "15%" }}
+            body={(rowData) => formatDate(rowData.transaction_date)}
+            sortable
+          />
+          <Column
+            field="description"
+            header="Description"
             style={{ width: "25%" }}
             sortable
           />
           <Column
-            field="email"
-            header="Email"
-            style={{ width: "30%" }}
+            field="total_debit"
+            header="Total Debit"
+            style={{ width: "15%" }}
+            body={(rowData) => currencyBodyTemplate(rowData, "total_debit")}
             sortable
           />
           <Column
-            field="job_position_title"
-            header="Job Position"
-            style={{ width: "25%" }}
+            field="total_credit"
+            header="Total Credit"
+            style={{ width: "15%" }}
+            body={(rowData) => currencyBodyTemplate(rowData, "total_credit")}
+            sortable
+          />
+          <Column
+            field="remaining_balance"
+            header="Remaining Balance"
+            style={{ width: "15%" }}
+            body={(rowData) =>
+              currencyBodyTemplate(rowData, "remaining_balance")
+            }
+            sortable
+          />
+          <Column
+            field="isPosting"
+            header="Status"
+            style={{ width: "10%" }}
+            body={(rowData) => (rowData.isPosting ? "Posted" : "Drafted")}
             sortable
           />
 
@@ -350,199 +418,96 @@ const GeneralLedger = () => {
       </Card>
 
       <Dialog
-        header={selectedUser ? "User Details" : "Create New User"}
+        header={
+          isEditMode ? "Edit General Ledger" : "Create New General Ledger"
+        }
         visible={visible}
-        onHide={() => {
-          setVisible(false);
-          setSelectedUser(null);
-          setIsEditMode(false);
-          setErrors({
-            username: "",
-            full_name: "",
-            email: "",
-            password: "",
-            role_id: "",
-            jobPosition_id: "",
-          });
-        }}
+        onHide={handleCancelEdit}
         className="custom-dialog"
       >
         <div className="p-fluid">
           <div className="p-field custom-field">
-            <label htmlFor="username">Username</label>
-            <InputText
-              id="username"
-              value={selectedUser ? selectedUser.username : newUser.username}
-              onChange={(e) =>
-                selectedUser
-                  ? setSelectedUser({
-                      ...selectedUser,
-                      username: e.target.value,
-                    })
-                  : setNewUser({ ...newUser, username: e.target.value })
-              }
-              className={`custom-input ${errors.username ? "p-invalid" : ""}`}
-              readOnly={selectedUser && !isEditMode}
-            />
-            {errors.username && (
-              <small className="p-error">{errors.username}</small>
-            )}
-          </div>
-          <div className="p-field custom-field">
-            <label htmlFor="full_name">Full Name</label>
-            <InputText
-              id="full_name"
-              value={selectedUser ? selectedUser.full_name : newUser.full_name}
-              onChange={(e) =>
-                selectedUser
-                  ? setSelectedUser({
-                      ...selectedUser,
-                      full_name: e.target.value,
-                    })
-                  : setNewUser({ ...newUser, full_name: e.target.value })
-              }
-              className={`custom-input ${errors.full_name ? "p-invalid" : ""}`}
-              readOnly={selectedUser && !isEditMode}
-            />
-            {errors.full_name && (
-              <small className="p-error">{errors.full_name}</small>
-            )}
-          </div>
-          <div className="p-field custom-field">
-            <label htmlFor="email">Email</label>
-            <InputText
-              id="email"
-              value={selectedUser ? selectedUser.email : newUser.email}
-              onChange={(e) =>
-                selectedUser
-                  ? setSelectedUser({ ...selectedUser, email: e.target.value })
-                  : setNewUser({ ...newUser, email: e.target.value })
-              }
-              className={`custom-input ${errors.email ? "p-invalid" : ""}`}
-              readOnly={selectedUser && !isEditMode}
-            />
-            {errors.email && <small className="p-error">{errors.email}</small>}
-          </div>
-          {(!selectedUser || isEditMode) && (
-            <div className="p-field custom-field">
-              <label htmlFor="password">Password</label>
-              <InputText
-                id="password"
-                type="password"
-                value={selectedUser ? selectedUser.password : newUser.password}
-                onChange={(e) =>
-                  selectedUser
-                    ? setSelectedUser({
-                        ...selectedUser,
-                        password: e.target.value,
-                      })
-                    : setNewUser({ ...newUser, password: e.target.value })
-                }
-                className={`custom-input ${errors.password ? "p-invalid" : ""}`}
-                placeholder={
-                  isEditMode ? "Leave blank to keep current password" : ""
-                }
-              />
-              {errors.password && (
-                <small className="p-error">{errors.password}</small>
-              )}
-            </div>
-          )}
-          <div className="p-field custom-field">
-            <label htmlFor="role_id">Role</label>
-            <Dropdown
-              id="role_id"
-              value={selectedUser ? selectedUser.role_id : newUser.role_id}
-              options={roles.map((role) => ({
-                label: role.name,
-                value: role.id,
-              }))}
-              onChange={(e) =>
-                selectedUser
-                  ? setSelectedUser({ ...selectedUser, role_id: e.value })
-                  : setNewUser({ ...newUser, role_id: e.value })
-              }
-              placeholder="Select a Role"
-              className={`custom-input ${errors.role_id ? "p-invalid" : ""}`}
-              disabled={selectedUser && !isEditMode}
-            />
-            {errors.role_id && (
-              <small className="p-error">{errors.role_id}</small>
-            )}
-          </div>
-          <div className="p-field custom-field">
-            <label htmlFor="jobPosition_id">Job Position</label>
-            <Dropdown
-              id="jobPosition_id"
+            <label htmlFor="transaction_date">Transaction Date</label>
+            <Calendar
+              id="transaction_date"
               value={
-                selectedUser
-                  ? selectedUser.jobPosition_id
-                  : newUser.jobPosition_id
+                selectedGeneralLedger
+                  ? selectedGeneralLedger.transaction_date
+                  : newGeneralLedger.transaction_date
               }
-              options={jobPositions.map((jobPosition) => ({
-                label: jobPosition.title,
-                value: jobPosition.id,
-              }))}
               onChange={(e) =>
-                selectedUser
-                  ? setSelectedUser({
-                      ...selectedUser,
-                      jobPosition_id: e.value,
+                selectedGeneralLedger
+                  ? setSelectedGeneralLedger({
+                      ...selectedGeneralLedger,
+                      transaction_date: e.value,
                     })
-                  : setNewUser({ ...newUser, jobPosition_id: e.value })
+                  : setNewGeneralLedger({
+                      ...newGeneralLedger,
+                      transaction_date: e.value,
+                    })
               }
-              placeholder="Select a Job Position"
-              className={`custom-input ${
-                errors.jobPosition_id ? "p-invalid" : ""
+              dateFormat="dd-mm-yy"
+              showIcon
+              className={`custom-calendar ${
+                errors.transaction_date ? "p-invalid" : ""
               }`}
-              disabled={selectedUser && !isEditMode}
             />
-            {errors.jobPosition_id && (
-              <small className="p-error">{errors.jobPosition_id}</small>
+            {errors.transaction_date && (
+              <small className="p-error">{errors.transaction_date}</small>
+            )}
+          </div>
+          <div className="p-field custom-field">
+            <label htmlFor="description">Description</label>
+            <InputText
+              id="description"
+              value={
+                selectedGeneralLedger
+                  ? selectedGeneralLedger.description
+                  : newGeneralLedger.description
+              }
+              onChange={(e) =>
+                selectedGeneralLedger
+                  ? setSelectedGeneralLedger({
+                      ...selectedGeneralLedger,
+                      description: e.target.value,
+                    })
+                  : setNewGeneralLedger({
+                      ...newGeneralLedger,
+                      description: e.target.value,
+                    })
+              }
+              className={`custom-input ${
+                errors.description ? "p-invalid" : ""
+              }`}
+            />
+            {errors.description && (
+              <small className="p-error">{errors.description}</small>
             )}
           </div>
         </div>
         <div className="custom-button">
-          {selectedUser ? (
-            <>
-              {isEditMode ? (
-                <>
-                  <Button
-                    label="Cancel"
-                    icon="pi pi-times"
-                    onClick={handleCancelEdit}
-                    className="p-button custom-cancel-button"
-                  />
-                  <Button
-                    label="Save"
-                    icon="pi pi-check"
-                    onClick={handleEditUser}
-                    className="p-button custom-save-button"
-                  />
-                </>
-              ) : (
-                (currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
-                  <Button
-                    label="Edit"
-                    icon="pi pi-pencil"
-                    onClick={() => setIsEditMode(true)}
-                    className="p-button custom-edit-button"
-                  />
-                )
-              )}
-            </>
-          ) : (
-            (currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
-              <Button
-                label="Save"
-                icon="pi pi-check"
-                onClick={handlecreateUsers}
-                className="p-button custom-save-button"
-              />
-            )
-          )}
+          <Button
+            label="Cancel"
+            icon="pi pi-times"
+            onClick={handleCancelEdit}
+            className="p-button p-button-secondary custom-cancel-button"
+          />
+          <Button
+            label={isEditMode ? "Update" : "Save"}
+            icon="pi pi-check"
+            onClick={
+              isEditMode ? handleEditGeneralLedger : handleCreateGeneralLedger
+            }
+            className="p-button custom-save-button"
+          />
         </div>
       </Dialog>
+
+      <DetailsLedger
+        visible={detailsVisible}
+        onHide={() => setDetailsVisible(false)}
+        selectedGeneralLedger={selectedGeneralLedger}
+      />
     </Layout>
   );
 };

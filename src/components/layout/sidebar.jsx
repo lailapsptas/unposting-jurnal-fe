@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import { logout } from "../../services/logout";
+import { autoLogout } from "../../services/logout";
 import "../styles/layout.css";
 import "../styles/sidebar.css";
 
@@ -13,10 +13,10 @@ export default function SidebarMenu({ visible }) {
 
   const handleLogoutConfirm = async () => {
     try {
-      await logout();
+      await autoLogout();
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      navigate("/login");
+      navigate("/login", { replace: true }); // Gunakan { replace: true } untuk mengganti history
     } catch (error) {
       console.error("Logout failed:", error);
       toast.current.show({
@@ -97,6 +97,10 @@ export default function SidebarMenu({ visible }) {
           <Link to="/general-ledgers" className="sidebar-item">
             <i className="pi pi-book" />
             <span>General Ledger</span>
+          </Link>
+          <Link to="/petty-cash" className="sidebar-item">
+            <i className="pi pi-money-bill" />
+            <span>Petty Cash</span>
           </Link>
           <Link to="/journal-post" className="sidebar-item">
             <i className="pi pi-file" />

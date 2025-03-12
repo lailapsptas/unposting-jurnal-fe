@@ -1,0 +1,213 @@
+.ledgers-container {
+  padding: 1rem;
+  padding-left: 2.3rem;
+  padding-right: 2.5rem;
+  margin-top: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 18px;
+  font-family: "Poppins", sans-serif;
+}
+
+.ledgers-title {
+  color: #92e3a9;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.ledgers-card {
+  background: #f9f9f9;
+  border-radius: 18px;
+  padding: 1rem;
+  border: none;
+}
+
+.search-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+  gap: 1rem;
+}
+
+.search-input {
+  flex: 1;
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  outline: none;
+  font-family: "Poppins", sans-serif;
+  transition: border-color 0.2s;
+  background-color: white;
+  color: #4a5568;
+  min-width: 200px;
+}
+
+.search-input:focus {
+  border-color: #92e3a9;
+}
+
+.search-input::placeholder {
+  color: #a0aec0;
+}
+
+.create-button {
+  background-color: #08596a;
+  color: white;
+  padding: 0.5rem 3rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 1rem;
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+}
+
+.create-button:hover {
+  background-color: #7dc994;
+}
+
+.p-datatable {
+  border-radius: 20px;
+  overflow: hidden;
+  margin-top: 1rem;
+  font-family: "Poppins", sans-serif;
+  font-size: 0.9rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.p-datatable-header {
+  background-color: #f9f9f9;
+}
+
+.p-datatable .p-column-header {
+  background-color: #f1f1f1;
+  font-weight: bold;
+}
+
+.custom-dialog {
+  font-family: "Poppins", sans-serif;
+  width: 40vw;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.custom-field {
+  margin-bottom: 1rem;
+}
+
+.custom-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: "Poppins", sans-serif;
+  margin-top: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-input:focus {
+  border-color: #92e3a9;
+}
+
+.custom-button {
+  margin-top: 2rem;
+  text-align: right;
+}
+
+.custom-save-button {
+  background-color: #08596a;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.custom-save-button:hover {
+  background-color: #7dc994;
+}
+
+.custom-edit-button {
+  background-color: #08596a;
+  border: none;
+  transition: background-color 0.2s;
+}
+
+.custom-edit-button:hover {
+  background-color: #7dc994;
+}
+
+.custom-cancel-button {
+  background-color: #6c757d;
+  border: none;
+  transition: background-color 0.2s;
+  margin-right: 0.5rem;
+}
+
+.custom-cancel-button:hover {
+  background-color: #5a6268;
+}
+
+.custom-calendar {
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+  margin-top: 0.5rem;
+}
+
+.custom-calendar .p-inputtext {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: "Poppins", sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-calendar .p-inputtext:focus {
+  border-color: #92e3a9;
+}
+
+.custom-calendar .p-button {
+  background-color: #f9f9f9;
+  border: 1px solid #e2e8f0;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  color: #4a5568;
+}
+
+.custom-calendar .p-button:hover {
+  background-color: #f1f1f1;
+}
+
+.p-datepicker {
+  font-family: "Poppins", sans-serif;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.p-datepicker .p-datepicker-header {
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.p-datepicker .p-datepicker-today > span {
+  background-color: #f1f1f1;
+}
+
+.p-datepicker .p-highlight {
+  background-color: #92e3a9;
+  color: #ffffff;
+}

@@ -87,6 +87,16 @@ const JobPositions = () => {
   };
 
   const handleDeleteJobPosition = async (id) => {
+    if (currentUser?.role_id !== 1) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "You do not have permission to delete job positions",
+        life: 3000,
+      });
+      return;
+    }
+
     try {
       await deleteJobPosition(id);
       setJobPositionsData((prevJobPositions) =>
@@ -110,6 +120,16 @@ const JobPositions = () => {
   };
 
   const handleCreateJobPosition = async () => {
+    if (currentUser?.role_id !== 1 && currentUser?.role_id !== 2) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "You do not have permission to create job positions",
+        life: 3000,
+      });
+      return;
+    }
+
     if (!validateInputs(newJobPosition)) {
       return;
     }
@@ -154,6 +174,16 @@ const JobPositions = () => {
   };
 
   const handleEditJobPosition = async () => {
+    if (currentUser?.role_id !== 1 && currentUser?.role_id !== 2) {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "You do not have permission to edit job positions",
+        life: 3000,
+      });
+      return;
+    }
+
     if (!validateInputs(selectedJobPosition)) {
       return;
     }
@@ -193,17 +223,19 @@ const JobPositions = () => {
   };
 
   const actionBodyTemplate = (rowData) => {
-    if (currentUser?.role_id !== 1 && currentUser?.role_id !== 2) {
+    if (currentUser?.role_id !== 1) {
       return null;
     }
 
     return (
-      <button
-        className="action-button"
+      <Button
+        icon="pi pi-trash"
+        rounded
+        outlined
+        severity="danger"
+        aria-label="Delete"
         onClick={(e) => confirmDelete(e, rowData.id)}
-      >
-        <i className="pi pi-trash action-icon"></i>
-      </button>
+      />
     );
   };
 
@@ -211,9 +243,9 @@ const JobPositions = () => {
     <Layout>
       <Toast ref={toast} />
       <ConfirmPopup />
-      <Card className="roles-container">
-        <h2 className="roles-title">Job Positions</h2>
-        <div className="roles-card">
+      <Card className="job-container">
+        <h2 className="job-title">Job Positions</h2>
+        <div className="job-card">
           <div className="search-container">
             <input
               type="text"
@@ -222,7 +254,6 @@ const JobPositions = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            {/* Only show create button for users with role_id 1 or 2 */}
             {(currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
               <button
                 className="create-button"
@@ -261,7 +292,7 @@ const JobPositions = () => {
             sortable
           />
 
-          {(currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
+          {currentUser?.role_id === 1 && (
             <Column
               body={actionBodyTemplate}
               header="Actions"

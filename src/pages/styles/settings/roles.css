@@ -156,22 +156,22 @@
 }
 
 .custom-edit-button {
-  background-color: #08596a; /* Warna yang sama dengan tombol Create */
+  background-color: #08596a;
   border: none;
   transition: background-color 0.2s;
 }
 
 .custom-edit-button:hover {
-  background-color: #7dc994; /* Warna hover yang sama dengan tombol Create */
+  background-color: #7dc994;
 }
 
 .custom-cancel-button {
-  background-color: #6c757d; /* Warna abu-abu untuk tombol Cancel */
+  background-color: #6c757d;
   border: none;
   transition: background-color 0.2s;
-  margin-right: 0.5rem; /* Jarak antara tombol Save dan Cancel */
+  margin-right: 0.5rem;
 }
 
 .custom-cancel-button:hover {
-  background-color: #5a6268; /* Warna hover untuk tombol Cancel */
+  background-color: #5a6268;
 }

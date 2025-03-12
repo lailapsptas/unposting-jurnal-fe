@@ -256,8 +256,12 @@ const Accounts = () => {
     }
 
     return (
-      <button
-        className="action-button"
+      <Button
+        icon="pi pi-trash"
+        rounded
+        outlined
+        severity="danger"
+        aria-label="Delete"
         onClick={(e) => {
           e.stopPropagation();
           confirmPopup({
@@ -276,9 +280,7 @@ const Accounts = () => {
             },
           });
         }}
-      >
-        <i className="pi pi-trash action-icon"></i>
-      </button>
+      />
     );
   };
 
@@ -303,9 +305,9 @@ const Accounts = () => {
     <Layout>
       <Toast ref={toast} />
       <ConfirmPopup />
-      <Card className="roles-container">
-        <h2 className="roles-title">Accounts</h2>
-        <div className="roles-card">
+      <Card className="account-container">
+        <h2 className="account-title">Accounts</h2>
+        <div className="account-card">
           <div className="search-container">
             <input
               type="text"

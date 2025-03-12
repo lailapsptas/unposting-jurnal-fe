@@ -1,16 +1,8 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_LOCAL_API_URL;
-
-const getToken = () => {
-  return localStorage.getItem("token");
-};
-
-axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
+import api from "../api.js";
 
 export const createReport = async (data) => {
   try {
-    const response = await axios.post(`${API_URL}/reports/`, data);
+    const response = await api.post("/reports/", data);
     return response.data;
   } catch (error) {
     console.error("Error creating report:", error);
@@ -20,7 +12,7 @@ export const createReport = async (data) => {
 
 export const getAllReports = async () => {
   try {
-    const response = await axios.get(`${API_URL}/reports/`);
+    const response = await api.get("/reports/");
     return response.data.data;
   } catch (error) {
     console.error("Error fetching reports:", error);
@@ -30,7 +22,7 @@ export const getAllReports = async () => {
 
 export const getReportById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/reports/${id}`);
+    const response = await api.get(`/reports/${id}`);
     return response.data.data;
   } catch (error) {
     console.error(`Error fetching report with id ${id}:`, error);
@@ -40,7 +32,7 @@ export const getReportById = async (id) => {
 
 export const downloadReportFile = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/reports/${id}/download`, {
+    const response = await api.get(`/reports/${id}/download`, {
       responseType: "blob", // Untuk menangani file binary (PDF/Excel)
     });
 
@@ -73,7 +65,7 @@ export const downloadReportFile = async (id) => {
 
 export const deleteReport = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/reports/${id}`);
+    const response = await api.delete(`/reports/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error deleting report with id ${id}:`, error);

@@ -1,16 +1,8 @@
-import axios from "axios";
-
-const API_URL = import.meta.env.VITE_LOCAL_API_URL;
-
-const getToken = () => {
-  return localStorage.getItem("token");
-};
-
-axios.defaults.headers.common["Authorization"] = `Bearer ${getToken()}`;
+import api from "../api.js";
 
 export const getAllRoles = async () => {
   try {
-    const response = await axios.get(`${API_URL}/roles/`);
+    const response = await api.get("/roles/");
     return response.data.data;
   } catch (error) {
     console.error("Error fetching roles:", error);
@@ -20,7 +12,7 @@ export const getAllRoles = async () => {
 
 export const getRoleById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/roles/${id}`);
+    const response = await api.get(`/roles/${id}`);
     return response.data.data;
   } catch (error) {
     console.error(`Error fetching role with id ${id}:`, error);
@@ -30,7 +22,7 @@ export const getRoleById = async (id) => {
 
 export const createRole = async (roleData) => {
   try {
-    const response = await axios.post(`${API_URL}/roles/`, roleData);
+    const response = await api.post("/roles/", roleData);
     return response.data.data;
   } catch (error) {
     console.error("Error creating role:", error);
@@ -40,7 +32,7 @@ export const createRole = async (roleData) => {
 
 export const updateRole = async (id, roleData) => {
   try {
-    const response = await axios.put(`${API_URL}/roles/${id}`, roleData);
+    const response = await api.put(`/roles/${id}`, roleData);
     return response.data.data;
   } catch (error) {
     console.error(`Error updating role with id ${id}:`, error);
@@ -50,7 +42,7 @@ export const updateRole = async (id, roleData) => {
 
 export const deleteRole = async (id) => {
   try {
-    const response = await axios.delete(`${API_URL}/roles/${id}`);
+    const response = await api.delete(`/roles/${id}`);
     return response.data;
   } catch (error) {
     console.error(`Error deleting role with id ${id}:`, error);

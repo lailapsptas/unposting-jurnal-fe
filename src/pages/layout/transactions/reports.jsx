@@ -21,7 +21,7 @@ import {
 import { getAllUsers } from "../../../services/settings/users";
 import { getAllAccounts } from "../../../services/transactions/accounts";
 import { useAuth } from "../../../states/use-auth";
-import "../../styles/transactions/accounts.css";
+import "../../styles/transactions/reports.css";
 
 const Reports = () => {
   const toast = useRef(null);
@@ -186,28 +186,33 @@ const Reports = () => {
 
   const actionBodyTemplate = (rowData) => {
     return (
-      <div className="actions">
+      <div className="action-buttons">
         <Button
           icon="pi pi-download"
-          className="p-button-rounded p-button-success"
+          rounded
+          outlined
+          severity="success"
+          aria-label="Download"
           onClick={() => handleDownloadReport(rowData.id)}
         />
         <Button
           icon="pi pi-trash"
-          className="p-button-text p-button-danger"
+          rounded
+          outlined
+          severity="danger"
+          aria-label="Delete"
           onClick={() => handleDeleteReport(rowData.id)}
         />
       </div>
     );
   };
 
-  // Reset form function
   const resetForm = () => {
     setVisible(false);
     setSelectedReport(null);
     setIsEditMode(false);
     setNewReport({
-      printed_by: "", // Changed from print_by to printed_by
+      printed_by: "",
       file_type: "",
       report_type: "",
       account_type: "",
@@ -222,9 +227,9 @@ const Reports = () => {
     <Layout>
       <Toast ref={toast} />
       <ConfirmPopup />
-      <Card className="roles-container">
-        <h2 className="roles-title">Reports</h2>
-        <div className="roles-card">
+      <Card className="report-container">
+        <h2 className="report-title">Reports</h2>
+        <div className="report-card">
           <div className="search-container">
             <input
               type="text"
@@ -258,7 +263,7 @@ const Reports = () => {
         >
           <Column field="id" header="ID" style={{ width: "7%" }} sortable />
           <Column
-            field="printed_by_user" // Keeping this unchanged as it's display only
+            field="printed_by_user"
             header="Print By"
             style={{ width: "23%" }}
             sortable
@@ -373,7 +378,7 @@ const Reports = () => {
                   setSelectedReport({
                     ...selectedReport,
                     report_type: value,
-                    // Reset conditional fields when changing report type
+
                     ...(value !== "account" && { account_type: "" }),
                     ...(value !== "general_ledger" && {
                       filter_by: "",
@@ -385,7 +390,7 @@ const Reports = () => {
                   setNewReport({
                     ...newReport,
                     report_type: value,
-                    // Reset conditional fields when changing report type
+
                     ...(value !== "account" && { account_type: "" }),
                     ...(value !== "general_ledger" && {
                       filter_by: "",
@@ -454,7 +459,7 @@ const Reports = () => {
                       setSelectedReport({
                         ...selectedReport,
                         filter_by: value,
-                        // Reset related fields when changing filter type
+
                         ...(value !== "month" && { filter_month: "" }),
                         ...(value !== "day" && { filter_day: "" }),
                       });
@@ -462,7 +467,7 @@ const Reports = () => {
                       setNewReport({
                         ...newReport,
                         filter_by: value,
-                        // Reset related fields when changing filter type
+
                         ...(value !== "month" && { filter_month: "" }),
                         ...(value !== "day" && { filter_day: "" }),
                       });

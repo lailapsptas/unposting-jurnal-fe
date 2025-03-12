@@ -15,7 +15,7 @@ import {
   getRoleById,
   updateRole,
 } from "../../../services/settings/roles";
-import { useAuth } from "../../../states/use-auth"; // Import the useAuth hook
+import { useAuth } from "../../../states/use-auth";
 import "../../styles/settings/roles.css";
 
 const Roles = () => {
@@ -30,7 +30,7 @@ const Roles = () => {
   const [initialRoleData, setInitialRoleData] = useState(null);
   const [errors, setErrors] = useState({ name: "", description: "" });
 
-  const { user: currentUser } = useAuth(); // Get the current user from the auth context
+  const { user: currentUser } = useAuth();
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -183,18 +183,19 @@ const Roles = () => {
   };
 
   const actionBodyTemplate = (rowData) => {
-    // Only show delete button for users with role_id 1 or 2
-    if (currentUser?.role_id !== 1 && currentUser?.role_id !== 2) {
+    if (currentUser?.role_id !== 1) {
       return null;
     }
 
     return (
-      <button
-        className="action-button"
+      <Button
+        icon="pi pi-trash"
+        rounded
+        outlined
+        severity="danger"
+        aria-label="Delete"
         onClick={(e) => confirmDelete(e, rowData.id)}
-      >
-        <i className="pi pi-trash action-icon"></i>
-      </button>
+      />
     );
   };
 
@@ -213,7 +214,7 @@ const Roles = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            {/* Only show create button for users with role_id 1 or 2 */}
+
             {(currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
               <button
                 className="create-button"
@@ -251,8 +252,8 @@ const Roles = () => {
             style={{ width: "50%" }}
             sortable
           />
-          {/* Only show actions column for users with role_id 1 or 2 */}
-          {(currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
+
+          {currentUser?.role_id === 1 && (
             <Column
               body={actionBodyTemplate}
               header="Actions"
@@ -325,7 +326,7 @@ const Roles = () => {
                     onClick={handleCancelEdit}
                     className="p-button custom-cancel-button"
                   />
-                  {/* Only show save button for users with role_id 1 or 2 */}
+
                   {(currentUser?.role_id === 1 ||
                     currentUser?.role_id === 2) && (
                     <Button
@@ -337,7 +338,6 @@ const Roles = () => {
                   )}
                 </>
               ) : (
-                // Only show edit button for users with role_id 1 or 2
                 (currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
                   <Button
                     label="Edit"
@@ -349,7 +349,6 @@ const Roles = () => {
               )}
             </>
           ) : (
-            // Only show save button for users with role_id 1 or 2
             (currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
               <Button
                 label="Save"

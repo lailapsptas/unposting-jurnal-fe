@@ -6,6 +6,8 @@ import Users from "../pages/layout/settings/users";
 import JobPositions from "../pages/layout/settings/job-positions";
 import Accounts from "../pages/layout/transactions/accounts";
 import GeneralLedger from "../pages/layout/transactions/general-ledgers";
+import PettyCash from "../pages/layout/transactions/petty-cash";
+// import JournalPost from "../pages/layout/transactions/journal-post";
 import Reports from "../pages/layout/transactions/reports";
 import ProtectedRoute from "../states/protected-route";
 
@@ -23,6 +25,8 @@ const AppRoutes = () => {
         <Route path="/job-positions" element={<JobPositions />} />
         <Route path="/accounts" element={<Accounts />} />
         <Route path="/general-ledgers" element={<GeneralLedger />} />
+        <Route path="/petty-cash" element={<PettyCash />} />
+        {/* <Route path="/journal-post" element={<JournalPost />} /> */}
         <Route path="/reports" element={<Reports />} />
 
         {/* Tambahkan rute lain yang dilindungi di sini */}

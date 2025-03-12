@@ -1,4 +1,4 @@
-.account-container {
+.petty-cashes-container {
   padding: 1rem;
   padding-left: 2.3rem;
   padding-right: 2.5rem;
@@ -10,7 +10,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-.account-title {
+.petty-cashes-title {
   color: #92e3a9;
   font-size: 1.5rem;
   margin-top: 0;
@@ -18,7 +18,7 @@
   font-weight: 800;
 }
 
-.account-card {
+.petty-cashes-card {
   background: #f9f9f9;
   border-radius: 18px;
   padding: 1rem;
@@ -202,4 +202,41 @@
 .status-dropdown.status-inactive .p-dropdown-label {
   background-color: #f44336;
   color: white;
+}
+
+.custom-calendar {
+  width: 100%;
+  font-family: "Poppins", sans-serif;
+  margin-top: 0.5rem;
+}
+
+.custom-calendar .p-inputtext {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-family: "Poppins", sans-serif;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.custom-calendar .p-inputtext:focus {
+  border-color: #92e3a9;
+}
+
+.custom-calendar .p-button {
+  background-color: #f9f9f9;
+  border: 1px solid #e2e8f0;
+  border-left: none;
+  border-radius: 0 8px 8px 0;
+  color: #4a5568;
+}
+
+.custom-calendar .p-button:hover {
+  background-color: #f1f1f1;
+}
+
+.custom-field {
+  margin-bottom: 1rem;
 }

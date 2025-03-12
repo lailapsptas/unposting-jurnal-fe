@@ -1,4 +1,4 @@
-.roles-container {
+.users-container {
   padding: 1rem;
   padding-left: 2.3rem;
   padding-right: 2.5rem;
@@ -10,7 +10,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-.roles-title {
+.users-title {
   color: #92e3a9;
   font-size: 1.5rem;
   margin-top: 0;
@@ -18,7 +18,7 @@
   font-weight: 800;
 }
 
-.roles-card {
+.users-card {
   background: #f9f9f9;
   border-radius: 18px;
   padding: 1rem;
@@ -156,22 +156,22 @@
 }
 
 .custom-edit-button {
-  background-color: #08596a; /* Warna yang sama dengan tombol Create */
+  background-color: #08596a;
   border: none;
   transition: background-color 0.2s;
 }
 
 .custom-edit-button:hover {
-  background-color: #7dc994; /* Warna hover yang sama dengan tombol Create */
+  background-color: #7dc994;
 }
 
 .custom-cancel-button {
-  background-color: #6c757d; /* Warna abu-abu untuk tombol Cancel */
+  background-color: #6c757d;
   border: none;
   transition: background-color 0.2s;
-  margin-right: 0.5rem; /* Jarak antara tombol Save dan Cancel */
+  margin-right: 0.5rem;
 }
 
 .custom-cancel-button:hover {
-  background-color: #5a6268; /* Warna hover untuk tombol Cancel */
+  background-color: #5a6268;
 }

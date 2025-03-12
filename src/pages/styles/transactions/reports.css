@@ -1,16 +1,13 @@
-.roles-container {
-  padding: 1rem;
-  padding-left: 2.3rem;
-  padding-right: 2.5rem;
+.report-container {
+  padding: 1rem 2.3rem;
   margin-top: 30px;
   background-color: #ffffff;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border: none;
   border-radius: 18px;
   font-family: "Poppins", sans-serif;
 }
 
-.roles-title {
+.report-title {
   color: #92e3a9;
   font-size: 1.5rem;
   margin-top: 0;
@@ -18,11 +15,10 @@
   font-weight: 800;
 }
 
-.roles-card {
+.report-card {
   background: #f9f9f9;
   border-radius: 18px;
   padding: 1rem;
-  border: none;
 }
 
 .search-container {
@@ -91,28 +87,6 @@
   font-weight: bold;
 }
 
-.action-button {
-  background: none;
-  border: none;
-  padding: 0.25rem;
-  cursor: pointer;
-  border-radius: 0.25rem;
-  transition: background-color 0.2s;
-}
-
-.action-button:hover {
-  background-color: #f3f4f6;
-}
-
-.action-icon {
-  color: #ef4444;
-  font-size: 1.1rem;
-}
-
-.action-button:hover .action-icon {
-  color: #dc2626;
-}
-
 .custom-dialog {
   font-family: "Poppins", sans-serif;
   width: 40vw;
@@ -155,16 +129,6 @@
   background-color: #7dc994;
 }
 
-.custom-edit-button {
-  background-color: #08596a;
-  border: none;
-  transition: background-color 0.2s;
-}
-
-.custom-edit-button:hover {
-  background-color: #7dc994;
-}
-
 .custom-cancel-button {
   background-color: #6c757d;
   border: none;
@@ -176,38 +140,13 @@
   background-color: #5a6268;
 }
 
-.status-dropdown {
-  width: auto;
-  border-radius: 20px;
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  padding-right: 1rem;
-}
-
-.status-dropdown .p-dropdown-trigger {
-  display: none;
-}
-
-.status-dropdown .p-dropdown-label {
-  border-radius: 20px;
-  padding: 0.5rem 1rem;
-}
-
-.status-dropdown.status-active .p-dropdown-label {
-  background-color: #92e3a9;
-  color: white;
-}
-
-.status-dropdown.status-inactive .p-dropdown-label {
-  background-color: #f44336;
-  color: white;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.action-button {
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
 }
 
 .p-button-text {

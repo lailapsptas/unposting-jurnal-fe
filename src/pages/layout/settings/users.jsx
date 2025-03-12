@@ -240,44 +240,45 @@ const Users = () => {
   };
 
   const actionBodyTemplate = (rowData) => {
-    if (currentUser?.role_id !== 1 && currentUser?.role_id !== 2) {
-      return null;
+    if (currentUser?.role_id === 1) {
+      return (
+        <Button
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          aria-label="Delete"
+          onClick={(e) => {
+            e.stopPropagation();
+            confirmPopup({
+              target: e.currentTarget,
+              message: "Are you sure you want to delete this user?",
+              icon: "pi pi-exclamation-triangle",
+              acceptClassName: "p-button-danger",
+              accept: () => handleDeleteUser(rowData.id),
+              reject: () => {
+                toast.current.show({
+                  severity: "info",
+                  summary: "Cancelled",
+                  detail: "Delete action cancelled",
+                  life: 3000,
+                });
+              },
+            });
+          }}
+        />
+      );
     }
-
-    return (
-      <button
-        className="action-button"
-        onClick={(e) => {
-          e.stopPropagation();
-          confirmPopup({
-            target: e.currentTarget,
-            message: "Are you sure you want to delete this user?",
-            icon: "pi pi-exclamation-triangle",
-            acceptClassName: "p-button-danger",
-            accept: () => handleDeleteUser(rowData.id),
-            reject: () => {
-              toast.current.show({
-                severity: "info",
-                summary: "Cancelled",
-                detail: "Delete action cancelled",
-                life: 3000,
-              });
-            },
-          });
-        }}
-      >
-        <i className="pi pi-trash action-icon"></i>
-      </button>
-    );
+    return null;
   };
 
   return (
     <Layout>
       <Toast ref={toast} />
       <ConfirmPopup />
-      <Card className="roles-container">
-        <h2 className="roles-title">Users</h2>
-        <div className="roles-card">
+      <Card className="users-container">
+        <h2 className="users-title">Users</h2>
+        <div className="users-card">
           <div className="search-container">
             <input
               type="text"
@@ -339,7 +340,7 @@ const Users = () => {
             sortable
           />
 
-          {(currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
+          {currentUser?.role_id === 1 && (
             <Column
               body={actionBodyTemplate}
               header="Actions"
@@ -513,12 +514,15 @@ const Users = () => {
                     onClick={handleCancelEdit}
                     className="p-button custom-cancel-button"
                   />
-                  <Button
-                    label="Save"
-                    icon="pi pi-check"
-                    onClick={handleEditUser}
-                    className="p-button custom-save-button"
-                  />
+                  {(currentUser?.role_id === 1 ||
+                    currentUser?.role_id === 2) && (
+                    <Button
+                      label="Save"
+                      icon="pi pi-check"
+                      onClick={handleEditUser}
+                      className="p-button custom-save-button"
+                    />
+                  )}
                 </>
               ) : (
                 (currentUser?.role_id === 1 || currentUser?.role_id === 2) && (
