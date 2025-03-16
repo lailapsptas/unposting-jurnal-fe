@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      target: development
+    image: react/unposting-jurnal-fe-dev:v1.0.0
+    container_name: unposting-jurnal-fe-dev
+    restart: unless-stopped
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: ["npm", "run", "dev"]
+
+  frontend-prod:
+    image: react/unposting-jurnal-fe-prod:v1.0.0
+    container_name: unposting-jurnal-fe
+    build:
+      context: .
+      target: production
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
