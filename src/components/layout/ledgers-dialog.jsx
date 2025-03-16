@@ -15,10 +15,8 @@ import {
 } from "../../services/transactions/general-journals.js";
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import {
-  getGeneralLedgerById,
-  postGeneralLedger,
-} from "../../services/transactions/general-ledgers.js";
+import { getGeneralLedgerById } from "../../services/transactions/general-ledgers.js";
+import { createPosting } from "../../services/transactions/postings.js";
 import "../styles/ledgers-dialog.css";
 
 const DetailsLedger = ({ visible, onHide, selectedGeneralLedger }) => {
@@ -34,6 +32,8 @@ const DetailsLedger = ({ visible, onHide, selectedGeneralLedger }) => {
   const [setSelectedGeneralLedger] = useState(null);
   const [yesterdayBalance, setYesterdayBalance] = useState(0);
   const toast = useRef(null);
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -184,11 +184,11 @@ const DetailsLedger = ({ visible, onHide, selectedGeneralLedger }) => {
         life: 3000,
       });
 
-      const refreshedLedger = await getGeneralLedgerById(
-        selectedGeneralLedger.id
-      );
-      setSelectedGeneralLedger(refreshedLedger);
-      setJournalEntries(refreshedLedger.journals || []);
+      // Tutup dialog
+      onHide();
+
+      // Reload window
+      window.location.reload();
     } catch (error) {
       console.error("Failed to save journal entries:", error);
       toast.current.show({
@@ -393,7 +393,15 @@ const DetailsLedger = ({ visible, onHide, selectedGeneralLedger }) => {
 
   const handlePostingAccept = async () => {
     try {
-      await postGeneralLedger(selectedGeneralLedger.id);
+      const response = await createPosting({
+        ledger_id: selectedGeneralLedger.id,
+        posted_by: user.id,
+      });
+
+      if (response.status === "error") {
+        throw new Error(response.message);
+      }
+
       toast.current.show({
         severity: "success",
         summary: "Success",
@@ -401,23 +409,15 @@ const DetailsLedger = ({ visible, onHide, selectedGeneralLedger }) => {
         life: 3000,
       });
 
-      const refreshedLedger = await getGeneralLedgerById(
-        selectedGeneralLedger.id
-      );
-      setSelectedGeneralLedger(refreshedLedger);
-      setTransactionData({
-        code: refreshedLedger.transaction_code,
-        date: formatDate(refreshedLedger.transaction_date),
-        description: refreshedLedger.description,
-        status: refreshedLedger.isPosting ? "Posted" : "Drafted",
-      });
-      setJournalEntries(refreshedLedger.journals || []);
+      onHide();
+
+      window.location.reload();
     } catch (error) {
       console.error("Failed to post ledger:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: "Failed to post ledger. Please try again.",
+        detail: error.message || "Failed to post ledger. Please try again.",
         life: 3000,
       });
     }
@@ -457,33 +457,52 @@ const DetailsLedger = ({ visible, onHide, selectedGeneralLedger }) => {
       >
         {/* Transaction Info Section */}
         <div className="transaction-info">
-          <div className="transaction-row">
-            <div className="transaction-field">
-              <label>Transaction Code</label>
-              <span className="colon">:</span>
-              <span className="value">{transactionData.code}</span>
+          <div className="transaction-columns">
+            {/* Left Column */}
+            <div className="transaction-column">
+              <div className="transaction-field">
+                <div className="label-container">
+                  <label>Transaction Code</label>
+                  <span className="colon">:</span>
+                </div>
+                <div className="value-container">
+                  <span className="value">{transactionData.code}</span>
+                </div>
+              </div>
+              <div className="transaction-field">
+                <div className="label-container">
+                  <label>Transaction Date</label>
+                  <span className="colon">:</span>
+                </div>
+                <div className="value-container">
+                  <span className="value">{transactionData.date}</span>
+                </div>
+              </div>
             </div>
-            <div className="transaction-field">
-              <label>Description</label>
-              <span className="colon">:</span>
-              <span className="value">{transactionData.description}</span>
-            </div>
-          </div>
-          <div className="transaction-row">
-            <div className="transaction-field">
-              <label>Transaction Date </label>
-              <span className="del">.</span>
-              <span className="colon">:</span>
-              <span className="value">{transactionData.date}</span>
-            </div>
-            <div className="transaction-field">
-              <label>Status</label>
-              <span className="colon">:</span>
-              <span className="value">{transactionData.status}</span>
+
+            {/* Right Column */}
+            <div className="transaction-column">
+              <div className="transaction-field">
+                <div className="label-container">
+                  <label>Description</label>
+                  <span className="colon">:</span>
+                </div>
+                <div className="value-container">
+                  <span className="value">{transactionData.description}</span>
+                </div>
+              </div>
+              <div className="transaction-field">
+                <div className="label-container">
+                  <label>Status</label>
+                  <span className="colon">:</span>
+                </div>
+                <div className="value-container">
+                  <span className="value">{transactionData.status}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
         <Divider />
 
         {/* Daily Journal Section */}

@@ -1,8 +1,8 @@
 import axios from "axios";
 
-const API_URL = import.meta.env.VITE_LOCAL_API_URL;
+const API_URL = import.meta.env.VITE_LOCAL_API_URL; //development
+//const API_URL = import.meta.env.VITE_PROD_API_URL; //production
 
-// Create an axios instance with default config
 const api = axios.create({
   baseURL: API_URL,
   headers: {
@@ -10,7 +10,6 @@ const api = axios.create({
   },
 });
 
-// Update request interceptor to always use the latest token
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

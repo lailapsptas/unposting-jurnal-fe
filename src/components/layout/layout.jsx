@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Navbar from "./Navbar";
-import SidebarMenu from "./Sidebar";
+import Navbar from "./navbar";
+import SidebarMenu from "./sidebar";
 import PropTypes from "prop-types";
 
 export default function Layout({ children }) {

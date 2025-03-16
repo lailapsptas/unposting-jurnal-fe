@@ -3,6 +3,7 @@ import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import PropTypes from "prop-types";
 import { useAuth } from "../../states/use-auth";
+import logo from "../../assets/logo/textBlack.png";
 import "../styles/navbar.css";
 
 export default function Navbar({ onToggleSidebar }) {
@@ -13,8 +14,9 @@ export default function Navbar({ onToggleSidebar }) {
         icon="pi pi-bars"
         className="toggle-button"
         onClick={onToggleSidebar}
+        aria-label="Toggle Sidebar"
       />
-      <img src="/src/assets/logo/textBlack.png" alt="Siskeu" className="logo" />
+      <img src={logo} alt="Siskeu" className="logo" />
     </div>
   );
 

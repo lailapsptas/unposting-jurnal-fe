@@ -102,7 +102,7 @@ export default function SidebarMenu({ visible }) {
             <i className="pi pi-money-bill" />
             <span>Petty Cash</span>
           </Link>
-          <Link to="/journal-post" className="sidebar-item">
+          <Link to="/postings" className="sidebar-item">
             <i className="pi pi-file" />
             <span>Journal Post</span>
           </Link>

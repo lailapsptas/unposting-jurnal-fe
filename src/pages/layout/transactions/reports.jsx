@@ -4,23 +4,20 @@ import { Card } from "primereact/card";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
-// import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
-// import { confirmPopup } from "primereact/confirmpopup";
 import { ConfirmPopup } from "primereact/confirmpopup";
 import { Toast } from "primereact/toast";
 import { Calendar } from "primereact/calendar";
 import {
   createReport,
   getAllReports,
-  getReportById,
   downloadReportFile,
   deleteReport,
 } from "../../../services/transactions/reports";
 import { getAllUsers } from "../../../services/settings/users";
 import { getAllAccounts } from "../../../services/transactions/accounts";
-import { useAuth } from "../../../states/use-auth";
+// import { useAuth } from "../../../states/use-auth";
 import "../../styles/transactions/reports.css";
 
 const Reports = () => {
@@ -29,23 +26,48 @@ const Reports = () => {
   const [filteredReports, setFilteredReports] = useState([]);
   const [visible, setVisible] = useState(false);
   const [newReport, setNewReport] = useState({
-    printed_by: "", // Changed from print_by to printed_by
+    printed_by: "",
     file_type: "",
     report_type: "",
     account_type: "",
     filter_by: "",
     filter_month: "",
-    filter_day: "",
+    filter_date: "",
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedReport, setSelectedReport] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [initialReportData, setInitialReportData] = useState(null);
+  // const [isEditMode, setIsEditMode] = useState(false);
+  const [setIsEditMode] = useState(false);
+  // const [initialReportData, setInitialReportData] = useState(null);
   const [errors, setErrors] = useState({});
   const [users, setUsers] = useState([]);
   const [accounts, setAccounts] = useState([]);
 
-  const { user: currentUser } = useAuth();
+  // const { user: currentUser } = useAuth();
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const formatMonth = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    return `${year}-${month}`;
+  };
+
+  const formatDay = (date) => {
+    if (!date) return "";
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -74,14 +96,11 @@ const Reports = () => {
     setFilteredReports(filteredData);
   }, [searchTerm, reportsData]);
 
-  // Improved validateInputs function - check required fields
   const validateInputs = (report) => {
     let isValid = true;
     const newErrors = {};
 
-    // Only validate required fields
     if (!report.printed_by) {
-      // Changed from print_by to printed_by
       newErrors.printed_by = "Print By is required";
       isValid = false;
     }
@@ -106,20 +125,19 @@ const Reports = () => {
     }
 
     try {
-      // Log the report data being sent to the API
       console.log("Sending report data:", newReport);
 
       const createdReport = await createReport(newReport);
       setReportsData((prevReports) => [...prevReports, createdReport]);
       setVisible(false);
       setNewReport({
-        printed_by: "", // Changed from print_by to printed_by
+        printed_by: "",
         file_type: "",
         report_type: "",
         account_type: "",
         filter_by: "",
         filter_month: "",
-        filter_day: "",
+        filter_date: "",
       });
       setErrors({});
       toast.current.show({
@@ -218,7 +236,7 @@ const Reports = () => {
       account_type: "",
       filter_by: "",
       filter_month: "",
-      filter_day: "",
+      filter_date: "",
     });
     setErrors({});
   };
@@ -285,6 +303,7 @@ const Reports = () => {
             header="Print Date"
             style={{ width: "25%" }}
             sortable
+            body={(rowData) => formatDate(rowData.print_date)}
           />
           <Column
             body={actionBodyTemplate}
@@ -301,7 +320,6 @@ const Reports = () => {
         className="custom-dialog"
       >
         <div className="p-fluid">
-          {/* Required Fields */}
           <div className="p-field custom-field">
             <label htmlFor="printed_by">
               Print By <span className="required-field">*</span>
@@ -383,7 +401,7 @@ const Reports = () => {
                     ...(value !== "general_ledger" && {
                       filter_by: "",
                       filter_month: "",
-                      filter_day: "",
+                      filter_date: "",
                     }),
                   });
                 } else {
@@ -395,7 +413,7 @@ const Reports = () => {
                     ...(value !== "general_ledger" && {
                       filter_by: "",
                       filter_month: "",
-                      filter_day: "",
+                      filter_date: "",
                     }),
                   });
                 }
@@ -410,7 +428,6 @@ const Reports = () => {
             )}
           </div>
 
-          {/* Optional Fields */}
           {newReport.report_type === "account" && (
             <div className="p-field custom-field">
               <label htmlFor="account_type">Account Type</label>
@@ -461,7 +478,7 @@ const Reports = () => {
                         filter_by: value,
 
                         ...(value !== "month" && { filter_month: "" }),
-                        ...(value !== "day" && { filter_day: "" }),
+                        ...(value !== "day" && { filter_date: "" }),
                       });
                     } else {
                       setNewReport({
@@ -469,7 +486,7 @@ const Reports = () => {
                         filter_by: value,
 
                         ...(value !== "month" && { filter_month: "" }),
-                        ...(value !== "day" && { filter_day: "" }),
+                        ...(value !== "day" && { filter_date: "" }),
                       });
                     }
                   }}
@@ -487,14 +504,20 @@ const Reports = () => {
                         ? selectedReport.filter_month
                         : newReport.filter_month
                     }
-                    onChange={(e) =>
-                      selectedReport
-                        ? setSelectedReport({
-                            ...selectedReport,
-                            filter_month: e.value,
-                          })
-                        : setNewReport({ ...newReport, filter_month: e.value })
-                    }
+                    onChange={(e) => {
+                      const formattedMonth = formatMonth(e.value);
+                      if (selectedReport) {
+                        setSelectedReport({
+                          ...selectedReport,
+                          filter_month: formattedMonth,
+                        });
+                      } else {
+                        setNewReport({
+                          ...newReport,
+                          filter_month: formattedMonth,
+                        });
+                      }
+                    }}
                     view="month"
                     dateFormat="mm/yy"
                     placeholder="Select Month"
@@ -504,22 +527,28 @@ const Reports = () => {
               )}
               {newReport.filter_by === "day" && (
                 <div className="p-field custom-field">
-                  <label htmlFor="filter_day">Filter Day</label>
+                  <label htmlFor="filter_date">Filter Day</label>
                   <Calendar
-                    id="filter_day"
+                    id="filter_date"
                     value={
                       selectedReport
-                        ? selectedReport.filter_day
-                        : newReport.filter_day
+                        ? selectedReport.filter_date
+                        : newReport.filter_date
                     }
-                    onChange={(e) =>
-                      selectedReport
-                        ? setSelectedReport({
-                            ...selectedReport,
-                            filter_day: e.value,
-                          })
-                        : setNewReport({ ...newReport, filter_day: e.value })
-                    }
+                    onChange={(e) => {
+                      const formattedDay = formatDay(e.value);
+                      if (selectedReport) {
+                        setSelectedReport({
+                          ...selectedReport,
+                          filter_date: formattedDay,
+                        });
+                      } else {
+                        setNewReport({
+                          ...newReport,
+                          filter_date: formattedDay,
+                        });
+                      }
+                    }}
                     dateFormat="dd/mm/yy"
                     placeholder="Select Day"
                     className="custom-input"

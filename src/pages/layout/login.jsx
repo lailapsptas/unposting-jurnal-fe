@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Toast } from "primereact/toast";
 import { login as loginApi } from "../../services/login";
 import { useAuth } from "../../states/use-auth";
+import logo from "../../assets/logo/textBlack.png";
 import "../styles/login.css";
 
 const Login = () => {
@@ -70,11 +71,7 @@ const Login = () => {
       </div>
       <div className="login-card">
         <div className="login-header">
-          <img
-            src="/src/assets/logo/textBlack.png"
-            alt="Siskeu Logo"
-            className="login-logo"
-          />
+          <img src={logo} alt="Siskeu Logo" className="login-logo" />
           <h1 className="login-title">Welcome to Siskeu App!</h1>
         </div>
         <form onSubmit={handleSubmit} className="login-form">
