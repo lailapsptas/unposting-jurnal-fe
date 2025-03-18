@@ -1,6 +1,8 @@
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_LOCAL_API_URL; //development
+console.log("API_URL:", import.meta.env.VITE_LOCAL_API_URL);
+
 //const API_URL = import.meta.env.VITE_PROD_API_URL; //production
 
 const api = axios.create({
